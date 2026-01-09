@@ -16,8 +16,8 @@ class Name(Field):
 class Phone(Field):
      # реалізація класу
     def __init__(self, value):
-        if not value.isdigit() or len(value) < 10: 
-            raise ValueError("Phone number must be at least 10 digits and contain only numbers.")
+        if not value.isdigit() or len(value) != 10 or value[0] == '0': 
+            raise ValueError("Phone number must be at least 10 digits and contain only numbers and first digit cannot be 0.")
         else:
             self.value = value
 
@@ -40,8 +40,8 @@ class Record:
 
     def edit_phone(self, old_phone, new_phone):
         if self.find_phone(old_phone):
-            self.remove_phone(old_phone)
-            self.add_phone(new_phone)
+            if self.add_phone(new_phone):
+                self.remove_phone(old_phone)
 
 
     def edit_email(self, old_email, new_email):  
