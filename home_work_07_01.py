@@ -155,11 +155,7 @@ class AddressBook(UserDict):
 {'; '.join(f'contact name: {str(Record.name.value)},\
 phones: {", ".join(str(phone.value) for phone in Record.phones )},\
 emails: {str(Record.emails)}, birthday: {Record.birthday.value if Record.birthday else "N/A"}' for Record in self.data.values())}" 
-    
-
-
-book = AddressBook()
-
+  
 
 def input_error(func):
     @wraps(func)
@@ -186,49 +182,39 @@ def parse_input(user_input):
 
 @input_error
 def add_contact(args, book: AddressBook):
-    name, phone, emails, birthdays = args
+    name, phone = args
     record = book.find(name)
     message = "Contact updated."
     if record is None:
         record = Record(name)
         book.add_record(record)
         message = "Contact added."
-    if phone:
-        record.add_phone(phone)
-    if emails:
-        record.add_email(emails)
-    if birthdays:
-        record.add_birthday(birthdays)
+        if phone:
+            record.add_phone(phone)    
     return message
 
 
 @input_error
 def change_contact(args, book):
-    name, phone, emails, birthdays = args 
-    if name in book:
-        book[name] = phone
-        if emails:
-            book[name] = emails
-        if birthdays:
-            book[name] = birthdays    
-        return "Contact updated."
-    else:
-        return "Contact not found."
+    name, phone, emails, birthdays = args     
+    book[name] = phone
+    if emails:
+        book[name] = emails
+    if birthdays:
+        book[name] = birthdays    
+    return "Contact updated."   
     
 
 @input_error
 def show_phone(args, book):
-        name = args[0]
-        if name in book:
-            return f"{name}: {book[name]}"
-        else:
-            return "Contact not found."
+    name = args[0]        
+    return f"{name}: {book[name]}"     
+       
         
-
 @input_error        
 def show_all_contacts(book): 
     if book:
-        return "\n".join(f"{name}: {phone}" for name, phone in book.items())
+        return str(book)
     else:
         return "No contacts found." 
     
@@ -236,19 +222,16 @@ def show_all_contacts(book):
 @input_error
 def add_birthday(args, book):
     name, birthday = args
-    if name in book:
-        book[name] = birthday
-        return "Birthday added."
-    else:
-        return "Contact not found."
+    record = book.find(name)
+    record.add_birthday(birthday)
+    return "Birthday added."
+   
 
 @input_error
 def show_birthday(args, book):
     name = args[0]
-    if name in book:
-        return f"{name}: {book[name]}"
-    else:
-        return "Contact not found."
+    return f"{name}: {book[name]}"
+    
 
 @input_error
 def birthdays(args, book):
@@ -256,9 +239,9 @@ def birthdays(args, book):
     upcoming_birthdays = book.get_upcoming_birthdays(book.data.values(), days)
     if upcoming_birthdays:
         for birthday in upcoming_birthdays:
-            print(f"Name: {birthday['name']}, Congratulation date: {birthday['congratulation_date']}")
+            return(f"Name: {birthday['name']}, Congratulation date: {birthday['congratulation_date']}")
     else:
-        print("No upcoming birthdays.")
+        return("No upcoming birthdays.")
 
 
 def main():
@@ -281,9 +264,9 @@ def main():
             print(show_phone(args, book))
         elif command == "all":
             print(show_all_contacts(book))
-        elif command == "add_birthday": 
+        elif command == "add-birthday": 
             print(add_birthday(args, book)) 
-        elif command == "show_birthday":
+        elif command == "show-birthday":
             print(show_birthday(args, book)) 
         elif command == "birthdays":
             print(birthdays(args, book)) 
