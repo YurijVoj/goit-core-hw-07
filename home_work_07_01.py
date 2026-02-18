@@ -2,21 +2,29 @@ from collections import UserDict
 import datetime
 from datetime import datetime, date, timedelta
 from functools import wraps
+from os import name
+
+
 
 class Field:
+
+
     def __init__(self, value):
         self.value = value
 
     def __str__(self):
         return str(self.value)
+    
 
 class Name(Field):
+
         
     def __init__(self, value):
         self.value = value
 
 
 class Phone(Field):
+
     
     def __init__(self, value):
         if not value.isdigit() or len(value) != 10 : 
@@ -25,16 +33,20 @@ class Phone(Field):
             self.value = value
 
 class Birthday(Field):
+
+
     def __init__(self, value):
-        try:            
-            day, month, year = map(int, value.split('.'))            
-            self.value = datetime.date(year, month, day)
+        try:    
+            self.value = datetime.strptime(value, "%d.%m.%Y").date()        
+            #day, month, year = map(int, value.split('.'))            
+            #self.value = datetime.date(year, month, day)
         except ValueError:
             raise ValueError("Invalid date format. Use DD.MM.YYYY")           
 
+
 class Record:
 
-
+    
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
@@ -94,9 +106,10 @@ class Record:
     def __str__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, emails: {self.emails}, \
             birthday: {self.birthday.value if self.birthday else 'N/A'}"
+    
 
-class AddressBook(UserDict):
-  
+class AddressBook(UserDict): 
+
 
     def add_record(self, Record):        
         self.data[Record.name.value] = Record
@@ -132,12 +145,12 @@ class AddressBook(UserDict):
             return birthday
 
 
-    def get_upcoming_birthdays(users, days=7):
+    def get_upcoming_birthdays(self, days=7):
         upcoming_birthdays = []    
         today = datetime.date.today() 
 
-        for user in users:
-            birthday_this_year = user.birthday.value.replace(year = today.year)   
+        for data in self.data.values():
+            birthday_this_year = data.birthday.value.replace(year = today.year)   
             birtday_weekday = adjust_for_weekend(birthday_this_year)
             if birthday_this_year < today:
                 birthday_this_year = birthday_this_year.replace(year = today.year + 1)                
@@ -145,8 +158,8 @@ class AddressBook(UserDict):
             if 0 <= int((birthday_this_year - today).days) <= days:
                 birthday_this_year = birtday_weekday          
                 congratulation_date_str = date_to_string(birthday_this_year)
-                user.birthday.value = congratulation_date_str
-                upcoming_birthdays.append({"name": user.name.value, "birthday": user.birthday.value})
+                data.birthday.value = congratulation_date_str
+                upcoming_birthdays.append({"name": data.name.value, "birthday": data.birthday.value})
         return upcoming_birthdays
     
     
@@ -155,7 +168,11 @@ class AddressBook(UserDict):
 {'; '.join(f'contact name: {str(Record.name.value)},\
 phones: {", ".join(str(phone.value) for phone in Record.phones )},\
 emails: {str(Record.emails)}, birthday: {Record.birthday.value if Record.birthday else "N/A"}' for Record in self.data.values())}" 
+<<<<<<< Updated upstream
   
+=======
+    
+>>>>>>> Stashed changes
 
 def input_error(func):
     @wraps(func)
@@ -189,13 +206,19 @@ def add_contact(args, book: AddressBook):
         record = Record(name)
         book.add_record(record)
         message = "Contact added."
+<<<<<<< Updated upstream
         if phone:
             record.add_phone(phone)    
+=======
+    if phone:
+        record.add_phone(phone)    
+>>>>>>> Stashed changes
     return message
 
 
 @input_error
 def change_contact(args, book):
+<<<<<<< Updated upstream
     name, phone, emails, birthdays = args     
     book[name] = phone
     if emails:
@@ -204,12 +227,26 @@ def change_contact(args, book):
         book[name] = birthdays    
     return "Contact updated."   
     
+=======
+    name, phone = args     
+    record = book.find(name)
+    if record is None:   
+        return "Contact not found."  
+    else:
+        record.edit_phone(record.phones[0].value, phone) 
+    return "Contact updated."
+        
+>>>>>>> Stashed changes
 
 @input_error
 def show_phone(args, book):
     name = args[0]        
+<<<<<<< Updated upstream
     return f"{name}: {book[name]}"     
        
+=======
+    return f"{name}: {book[name]}"      
+>>>>>>> Stashed changes
         
 @input_error        
 def show_all_contacts(book): 
@@ -225,21 +262,33 @@ def add_birthday(args, book):
     record = book.find(name)
     record.add_birthday(birthday)
     return "Birthday added."
+<<<<<<< Updated upstream
    
+=======
+
+>>>>>>> Stashed changes
 
 @input_error
 def show_birthday(args, book):
     name = args[0]
     return f"{name}: {book[name]}"
+<<<<<<< Updated upstream
     
+=======
+
+>>>>>>> Stashed changes
 
 @input_error
 def birthdays(args, book):
-    days = int(args[0]) if args else 7
-    upcoming_birthdays = book.get_upcoming_birthdays(book.data.values(), days)
+    days = int(args[0]) 
+    upcoming_birthdays = book.get_upcoming_birthdays(book, days)
     if upcoming_birthdays:
+<<<<<<< Updated upstream
         for birthday in upcoming_birthdays:
             return(f"Name: {birthday['name']}, Congratulation date: {birthday['congratulation_date']}")
+=======
+        return upcoming_birthdays
+>>>>>>> Stashed changes
     else:
         return("No upcoming birthdays.")
 
