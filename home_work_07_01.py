@@ -168,11 +168,7 @@ class AddressBook(UserDict):
 {'; '.join(f'contact name: {str(Record.name.value)},\
 phones: {", ".join(str(phone.value) for phone in Record.phones )},\
 emails: {str(Record.emails)}, birthday: {Record.birthday.value if Record.birthday else "N/A"}' for Record in self.data.values())}" 
-<<<<<<< Updated upstream
-  
-=======
-    
->>>>>>> Stashed changes
+
 
 def input_error(func):
     @wraps(func)
@@ -206,28 +202,13 @@ def add_contact(args, book: AddressBook):
         record = Record(name)
         book.add_record(record)
         message = "Contact added."
-<<<<<<< Updated upstream
-        if phone:
-            record.add_phone(phone)    
-=======
     if phone:
         record.add_phone(phone)    
->>>>>>> Stashed changes
     return message
 
-
+    
 @input_error
 def change_contact(args, book):
-<<<<<<< Updated upstream
-    name, phone, emails, birthdays = args     
-    book[name] = phone
-    if emails:
-        book[name] = emails
-    if birthdays:
-        book[name] = birthdays    
-    return "Contact updated."   
-    
-=======
     name, phone = args     
     record = book.find(name)
     if record is None:   
@@ -236,18 +217,14 @@ def change_contact(args, book):
         record.edit_phone(record.phones[0].value, phone) 
     return "Contact updated."
         
->>>>>>> Stashed changes
+
 
 @input_error
 def show_phone(args, book):
-    name = args[0]        
-<<<<<<< Updated upstream
+    name = args[0] 
     return f"{name}: {book[name]}"     
        
-=======
-    return f"{name}: {book[name]}"      
->>>>>>> Stashed changes
-        
+  
 @input_error        
 def show_all_contacts(book): 
     if book:
@@ -262,33 +239,20 @@ def add_birthday(args, book):
     record = book.find(name)
     record.add_birthday(birthday)
     return "Birthday added."
-<<<<<<< Updated upstream
-   
-=======
+  
 
->>>>>>> Stashed changes
-
-@input_error
 def show_birthday(args, book):
     name = args[0]
     return f"{name}: {book[name]}"
-<<<<<<< Updated upstream
-    
-=======
 
->>>>>>> Stashed changes
 
 @input_error
 def birthdays(args, book):
     days = int(args[0]) 
     upcoming_birthdays = book.get_upcoming_birthdays(book, days)
     if upcoming_birthdays:
-<<<<<<< Updated upstream
         for birthday in upcoming_birthdays:
-            return(f"Name: {birthday['name']}, Congratulation date: {birthday['congratulation_date']}")
-=======
-        return upcoming_birthdays
->>>>>>> Stashed changes
+            print(f"Name: {birthday['name']}, Congratulation date: {birthday['birthday']}")
     else:
         return("No upcoming birthdays.")
 
