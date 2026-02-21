@@ -3,6 +3,7 @@ import datetime
 from datetime import datetime, date, timedelta
 from functools import wraps
 from os import name
+from time import strftime
 
 
 
@@ -37,7 +38,9 @@ class Birthday(Field):
 
     def __init__(self, value):
         try:    
-            self.value = datetime.strptime(value, "%d.%m.%Y").date()        
+            new_date = datetime.strptime(value, "%d.%m.%Y").date()
+            self.value = new_date.strftime("%Y.%m.%d")
+            #datetime.strptime(value, "%d.%m.%Y").date()        
             #day, month, year = map(int, value.split('.'))            
             #self.value = datetime.date(year, month, day)
         except ValueError:
@@ -222,7 +225,11 @@ def change_contact(args, book):
 @input_error
 def show_phone(args, book):
     name = args[0] 
-    return f"{name}: {book[name]}"     
+    record = book.find(name)
+    if record is None:
+        return "Contact not found."
+    else:
+        return f"phones: {record.phones}"
        
   
 @input_error        
@@ -239,22 +246,30 @@ def add_birthday(args, book):
     record = book.find(name)
     record.add_birthday(birthday)
     return "Birthday added."
-  
 
+  
+@input_error
 def show_birthday(args, book):
     name = args[0]
-    return f"{name}: {book[name]}"
+    record = book.find(name)
+    return f"birthday: {record.birthday.value}"
 
 
 @input_error
-def birthdays(args, book):
-    days = int(args[0]) 
-    upcoming_birthdays = book.get_upcoming_birthdays(book, days)
-    if upcoming_birthdays:
-        for birthday in upcoming_birthdays:
-            print(f"Name: {birthday['name']}, Congratulation date: {birthday['birthday']}")
-    else:
-        return("No upcoming birthdays.")
+def birthdays(book):
+       # Метод викликається від об'єкта book, self передається автоматично
+    new_upcoming_birthdays = book.get_upcoming_birthdays() 
+    
+    if not new_upcoming_birthdays:
+        return "No upcoming birthdays next week."
+    
+    # Вивід результатів (приклад)
+    return "\n".join([f"{d['name']}: {d['birthday']}" for d in new_upcoming_birthdays])
+    # new_upcoming_birthdays = book.get_upcoming_birthdays()
+    # if new_upcoming_birthdays:       
+    #     return(new_upcoming_birthdays)
+    # else:
+    #     return("No upcoming birthdays.")
 
 
 def main():
@@ -282,7 +297,7 @@ def main():
         elif command == "show-birthday":
             print(show_birthday(args, book)) 
         elif command == "birthdays":
-            print(birthdays(args, book)) 
+            print(birthdays(book)) 
         else:
             print("Invalid command.")
 
