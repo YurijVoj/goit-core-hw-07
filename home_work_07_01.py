@@ -235,7 +235,7 @@ def change_contact(args, book):
 def show_phone(args, book):
     name = args[0] 
     record = book.find(name)
-    return record.self.phones 
+    return f"phones: {record.phones.value}" 
        
   
 @input_error        
