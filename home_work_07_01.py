@@ -33,6 +33,7 @@ class Phone(Field):
         else:
             self.value = value
 
+
 class Birthday(Field):
 
 
@@ -68,12 +69,15 @@ class Record:
         self.birthday = Birthday(birthday)           
 
 
-    def edit_phone(self, old_phone, new_phone):
-        if self.find_phone(old_phone) is None:
-            raise ValueError("Old phone number not found.")
-        else:
-            self.add_phone(new_phone)            
-            self.remove_phone(old_phone)
+    def edit_phone(self, new_phone, old_phone=None):
+        if old_phone is None:
+             self.add_phone(new_phone)
+        else:            
+            if self.find_phone(old_phone) is None:
+                raise ValueError("Old phone number not found.")
+            else:
+                self.add_phone(new_phone)            
+                self.remove_phone(old_phone)
 
     def edit_email(self, old_email, new_email):  
         if self.find_email(old_email):
@@ -217,19 +221,16 @@ def change_contact(args, book):
     if record is None:   
         return "Contact not found."  
     else:
-        record.edit_phone(record.phones[0].value, phone) 
+        record.edit_phone(record.phones.value) 
     return "Contact updated."
         
 
 
-@input_error
+#@input_error
 def show_phone(args, book):
     name = args[0] 
     record = book.find(name)
-    if record is None:
-        return "Contact not found."
-    else:
-        return f"phones: {record.phones}"
+    return f"phones: {record.phones.value}"
        
   
 @input_error        
@@ -255,7 +256,7 @@ def show_birthday(args, book):
     return f"birthday: {record.birthday.value}"
 
 
-@input_error
+#@input_error
 def birthdays(book):
        # Метод викликається від об'єкта book, self передається автоматично
     new_upcoming_birthdays = book.get_upcoming_birthdays() 
