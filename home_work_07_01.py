@@ -30,8 +30,11 @@ class Phone(Field):
     def __init__(self, value):
         if not value.isdigit() or len(value) != 10 : 
             raise ValueError("Phone number must be at least 10 digits and contain only numbers.")
-        else:
+        else:            
             self.value = value
+
+    # def __str__(self):
+    #     return self.value
 
 
 class Birthday(Field):
@@ -69,15 +72,12 @@ class Record:
         self.birthday = Birthday(birthday)           
 
 
-    def edit_phone(self, new_phone, old_phone=None):
-        if old_phone is None:
-             self.add_phone(new_phone)
-        else:            
-            if self.find_phone(old_phone) is None:
-                raise ValueError("Old phone number not found.")
-            else:
-                self.add_phone(new_phone)            
-                self.remove_phone(old_phone)
+    def edit_phone(self, old_phone, new_phone):                   
+        if self.find_phone(old_phone) is None:
+            raise ValueError("Old phone number not found.")
+        else:
+            self.add_phone(new_phone)            
+            self.remove_phone(old_phone)
 
     def edit_email(self, old_email, new_email):  
         if self.find_email(old_email):
@@ -113,6 +113,10 @@ class Record:
     def __str__(self):
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, emails: {self.emails}, \
             birthday: {self.birthday.value if self.birthday else 'N/A'}"
+    
+
+    # def __str__(self.phones):
+    #     return f"phones: {'; '.join(p.value for p in self.phones)}"
     
 
 class AddressBook(UserDict): 
@@ -203,34 +207,35 @@ def parse_input(user_input):
 @input_error
 def add_contact(args, book: AddressBook):
     name, phone = args
-    record = book.find(name)
-    message = "Contact updated."
+    record = book.find(name)    
     if record is None:
         record = Record(name)
         book.add_record(record)
         message = "Contact added."
-    if phone:
-        record.add_phone(phone)    
+        record.add_phone(phone)  
+    else:
+        record.add_phone(phone)  
+        message = "Phone number added to existing contact."      
     return message
 
     
 @input_error
 def change_contact(args, book):
-    name, phone = args     
+    name, old_phone, new_phone = args     
     record = book.find(name)
     if record is None:   
         return "Contact not found."  
     else:
-        record.edit_phone(record.phones.value) 
+        record.edit_phone(old_phone, new_phone) 
     return "Contact updated."
         
 
 
-#@input_error
+@input_error
 def show_phone(args, book):
     name = args[0] 
     record = book.find(name)
-    return f"phones: {record.phones.value}"
+    return record.self.phones 
        
   
 @input_error        
