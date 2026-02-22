@@ -33,8 +33,8 @@ class Phone(Field):
         else:            
             self.value = value
 
-    # def __str__(self):
-    #     return self.value
+    def __repr__(self):
+        return self.value
 
 
 class Birthday(Field):
@@ -158,7 +158,7 @@ class AddressBook(UserDict):
 
     def get_upcoming_birthdays(self, days=7):
         upcoming_birthdays = []    
-        today = datetime.date.today() 
+        today = date.today() 
 
         for data in self.data.values():
             birthday_this_year = data.birthday.value.replace(year = today.year)   
@@ -235,8 +235,9 @@ def change_contact(args, book):
 def show_phone(args, book):
     name = args[0] 
     record = book.find(name)
-    return f"phones: {record.phones.value}" 
-       
+    return f"phones: {record.phones}"
+        
+    #return record.self.phones  
   
 @input_error        
 def show_all_contacts(book): 
@@ -261,7 +262,7 @@ def show_birthday(args, book):
     return f"birthday: {record.birthday.value}"
 
 
-#@input_error
+@input_error
 def birthdays(book):
        # Метод викликається від об'єкта book, self передається автоматично
     new_upcoming_birthdays = book.get_upcoming_birthdays() 
