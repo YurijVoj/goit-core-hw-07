@@ -4,7 +4,8 @@ from datetime import datetime, date, timedelta
 from functools import wraps
 from os import name
 from time import strftime
-
+from datetime import date
+from datetime import datetime
 
 
 class Field:
@@ -43,7 +44,7 @@ class Birthday(Field):
     def __init__(self, value):
         try:    
             new_date = datetime.strptime(value, "%d.%m.%Y").date()
-            self.value = new_date.strftime("%Y.%m.%d")
+            self.value = new_date.strftime("%d.%m.%Y")
             #datetime.strptime(value, "%d.%m.%Y").date()        
             #day, month, year = map(int, value.split('.'))            
             #self.value = datetime.date(year, month, day)
@@ -135,12 +136,12 @@ class AddressBook(UserDict):
         return self.data.get(name) 
     
     
-    def date_to_string(date):  #переформотування дата рядока в рядок 
-        return date.strftime("%Y.%m.%d")
+    def date_to_string(self,date):  #переформотування дата рядока в рядок 
+        return date.strftime("%d.%m.%Y")
 
 
     
-    def find_next_weekday(birthday, weekday): #присвоєння дати на понед якщо випадає вихідн день 
+    def find_next_weekday(self,birthday, weekday): #присвоєння дати на понед якщо випадає вихідн день 
         days_ahead = weekday - birthday.weekday()
         if days_ahead <= 0:
             days_ahead += 7
@@ -148,8 +149,8 @@ class AddressBook(UserDict):
 
 
     
-    def adjust_for_weekend(birthday): #встановлення birthday чи є вихідн день 
-        birthday_next_weekday = find_next_weekday(birthday, 0)
+    def adjust_for_weekend(self,birthday): #встановлення birthday чи є вихідн день 
+        birthday_next_weekday = self.find_next_weekday(birthday, 0)
         if birthday.weekday() >= 5:
             return birthday_next_weekday
         else :
@@ -161,14 +162,15 @@ class AddressBook(UserDict):
         today = date.today() 
 
         for data in self.data.values():
+            data.birthday.value = datetime.strptime(data.birthday.value, "%d.%m.%Y").date() if data.birthday else None
             birthday_this_year = data.birthday.value.replace(year = today.year)   
-            birtday_weekday = adjust_for_weekend(birthday_this_year)
+            birtday_weekday = self.adjust_for_weekend(birthday_this_year)
             if birthday_this_year < today:
                 birthday_this_year = birthday_this_year.replace(year = today.year + 1)                
 
             if 0 <= int((birthday_this_year - today).days) <= days:
                 birthday_this_year = birtday_weekday          
-                congratulation_date_str = date_to_string(birthday_this_year)
+                congratulation_date_str = self.date_to_string(birthday_this_year)
                 data.birthday.value = congratulation_date_str
                 upcoming_birthdays.append({"name": data.name.value, "birthday": data.birthday.value})
         return upcoming_birthdays
