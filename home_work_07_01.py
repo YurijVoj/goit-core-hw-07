@@ -150,9 +150,7 @@ class AddressBook(UserDict):
 
     
     def adjust_for_weekend(self,birthday): #встановлення birthday чи є вихідн день 
-        birthday_next_weekday = self.find_next_weekday(
-            
-            birthday, 0)
+        birthday_next_weekday = self.find_next_weekday( birthday, 0)
         if birthday.weekday() >= 5:
             return birthday_next_weekday
         else :
@@ -164,17 +162,19 @@ class AddressBook(UserDict):
         today = date.today() 
 
         for data in self.data.values():
-            data.birthday.value = datetime.strptime(data.birthday.value, "%d.%m.%Y").date() if data.birthday else None
-            birthday_this_year = data.birthday.value.replace(year = today.year)   
-            birtday_weekday = self.adjust_for_weekend(birthday_this_year)
-            if birthday_this_year < today:
-                birthday_this_year = birthday_this_year.replace(year = today.year + 1)                
+            if data.birthday.value is None:
+                upcoming_birthdays.append({"name": data.name.value, "birthday": "No birthday set"}) 
+            else:   
+                data.birthday.value = datetime.strptime(data.birthday.value, "%d.%m.%Y").date() 
+                birthday_this_year = data.birthday.value.replace(year = today.year)   
+                birtday_weekday = self.adjust_for_weekend(birthday_this_year)
+                if birthday_this_year < today:
+                    birthday_this_year = birthday_this_year.replace(year = today.year + 1)                
 
-            if 0 <= int((birthday_this_year - today).days) <= days:
-                birthday_this_year = birtday_weekday          
-                congratulation_date_str = self.date_to_string(birthday_this_year)
-                data.birthday.value = congratulation_date_str
-                upcoming_birthdays.append({"name": data.name.value, "birthday": data.birthday.value})
+                if 0 <= int((birthday_this_year - today).days) <= days:
+                    birthday_this_year = birtday_weekday          
+                    congratulation_date_str = self.date_to_string(birthday_this_year)                
+                    upcoming_birthdays.append({"name": data.name.value, "birthday": congratulation_date_str})                 
         return upcoming_birthdays
     
     
