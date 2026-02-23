@@ -150,7 +150,9 @@ class AddressBook(UserDict):
 
     
     def adjust_for_weekend(self,birthday): #встановлення birthday чи є вихідн день 
-        birthday_next_weekday = self.find_next_weekday(birthday, 0)
+        birthday_next_weekday = self.find_next_weekday(
+            
+            birthday, 0)
         if birthday.weekday() >= 5:
             return birthday_next_weekday
         else :
@@ -177,9 +179,9 @@ class AddressBook(UserDict):
     
     
     def __str__(self):
-        return f"Record name: {'; '.join(self.data.keys())},\
-{'; '.join(f'contact name: {str(Record.name.value)},\
-phones: {", ".join(str(phone.value) for phone in Record.phones )},\
+        return f"Record name: {'; '.join(self.data.keys())}'\n'\
+{'\n'.join(f'contact name: {str(Record.name.value)},\
+phones: {",".join(str(phone.value) for phone in Record.phones )},\
 emails: {str(Record.emails)}, birthday: {Record.birthday.value if Record.birthday else "N/A"}' for Record in self.data.values())}" 
 
 
