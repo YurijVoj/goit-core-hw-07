@@ -267,7 +267,7 @@ def show_birthday(args, book):
     return f"birthday: {record.birthday}"
 
 
-#input_error
+@input_error
 def birthdays(book):
        # Метод викликається від об'єкта book, self передається автоматично
     new_upcoming_birthdays = book.get_upcoming_birthdays() 
