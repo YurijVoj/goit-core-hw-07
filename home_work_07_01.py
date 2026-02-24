@@ -1,11 +1,11 @@
 from collections import UserDict
 import datetime
-from datetime import datetime, date, timedelta
 from functools import wraps
 from os import name
 from time import strftime
 from datetime import date
 from datetime import datetime
+from datetime import datetime, date, timedelta
 
 
 class Field:
@@ -42,7 +42,7 @@ class Birthday(Field):
 
 
     def __init__(self, value):
-        try:    
+        try:                       
             new_date = datetime.strptime(value, "%d.%m.%Y").date()
             self.value = new_date.strftime("%d.%m.%Y")
             #datetime.strptime(value, "%d.%m.%Y").date()        
@@ -163,10 +163,11 @@ class AddressBook(UserDict):
 
         for data in self.data.values():
             if data.birthday.value is None:
-                upcoming_birthdays.append({"name": data.name.value, "birthday": "No birthday set"}) 
+                upcoming_birthdays.append({"name": data.name.value}) 
             else:   
-                data.birthday.value = datetime.strptime(data.birthday.value, "%d.%m.%Y").date() 
-                birthday_this_year = data.birthday.value.replace(year = today.year)   
+                bdayv=data.birthday.value
+                bday = datetime.strptime(bdayv, "%d.%m.%Y").date() 
+                birthday_this_year = bday.replace(year = today.year)   
                 birtday_weekday = self.adjust_for_weekend(birthday_this_year)
                 if birthday_this_year < today:
                     birthday_this_year = birthday_this_year.replace(year = today.year + 1)                
@@ -263,7 +264,7 @@ def add_birthday(args, book):
 def show_birthday(args, book):
     name = args[0]
     record = book.find(name)
-    return f"birthday: {record.birthday.value}"
+    return f"birthday: {record.birthday}"
 
 
 @input_error
